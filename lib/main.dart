@@ -50,13 +50,13 @@ void main() async {
   // Initialize the FlutterLocalNotificationsPlugin instance
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('app_icon');
-  final IOSInitializationSettings initializationSettingsIOS =
-      const IOSInitializationSettings(
+  const IOSInitializationSettings initializationSettingsIOS =
+      IOSInitializationSettings(
           requestAlertPermission: false,
           requestBadgePermission: false,
           requestSoundPermission: false,
           onDidReceiveLocalNotification: null);
-  final InitializationSettings initializationSettings = InitializationSettings(
+  const InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
 
   print('InitializationSettings: $initializationSettings');
