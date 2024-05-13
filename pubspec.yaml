@@ -1,0 +1,83 @@
+name: minervaschool
+description: A new Flutter project.
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.17.0 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  dio: ^4.0.6
+  fluttertoast: ^8.0.8
+  pretty_dio_logger: ^1.1.1
+  flutter_bloc: ^8.1.1
+  shared_preferences: ^2.0.15
+  modal_progress_hud_nsn: ^0.3.0
+  device_info_plus: ^8.0.0
+  package_info_plus: ^3.0.2
+  pointycastle: ^3.6.2
+  basic_utils: ^5.4.2
+  flutter_inappwebview: ^5.7.2+3
+  flutter_downloader: ^1.10.5
+  path_provider: ^2.0.12
+  permission_handler: ^10.2.0
+  url_launcher: ^6.1.9
+  flutter_share_me: ^1.4.0
+  pdf: ^3.9.0
+  html: ^0.15.4
+  flutter_html: ^3.0.0-beta.2
+  flutter_html_table: ^3.0.0-beta.2
+  file_picker: ^5.3.1
+  table_calendar: ^3.0.9
+  http: ^0.13.6
+  webview_flutter: ^4.4.2
+  open_filex: ^4.3.2
+  flutter_cached_pdfview: ^0.4.1
+  flutter_local_notifications: ^9.8.0+1
+  firebase_messaging: ^14.3.0
+  firebase_core: ^2.8.0
+  google_nav_bar: ^5.0.6
+  flutter_staggered_grid_view: ^0.4.0
+  provider: ^6.0.0
+  xml: ^6.2.2
+  flutter_pdfview: ^1.0.3
+  advance_pdf_viewer: ^2.0.1
+  photo_view: ^0.14.0
+  flutter_svg: ^2.0.5
+  dotted_border: ^2.0.3
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+  fonts:
+
+    - family: jost_bold
+      fonts:
+        - asset: assets/fonts/jost_bold.ttf
+    - family: jost_regular
+      fonts:
+        - asset: assets/fonts/jost_regular.ttf
+
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat.ttf
+
+  assets:
+    - assets/images/
+    - assets/finalImages/
+    - assets/newbackground/
+    - assets/newIcons/
+    - assets/
+    - assets/images/student.jpeg

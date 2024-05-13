@@ -1,0 +1,364 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:html/parser.dart' as htmlParser;
+import 'package:http/http.dart' as http;
+import 'package:minervaschool/Screens/ExtendedViewScreens/homework.dart';
+import 'package:minervaschool/Screens/HomeScreen/documentviewer.dart';
+import 'package:minervaschool/Screens/HomeScreen/pdfviewer.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart'; // Make sure this import is correct
+import 'package:permission_handler/permission_handler.dart';
+import 'package:path/path.dart' as path;
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:intl/intl.dart';
+
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:crypto/crypto.dart';
+
+class HomeworkDetailsScreen extends StatefulWidget {
+  final Homework homework;
+  final List<Map<String, dynamic>> attachments;
+
+  HomeworkDetailsScreen({
+    required this.homework,
+    required this.attachments,
+  });
+
+  @override
+  _HomeworkDetailsScreenState createState() => _HomeworkDetailsScreenState();
+}
+
+class _HomeworkDetailsScreenState extends State<HomeworkDetailsScreen> {
+  bool isDownloading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    String parsedContent = htmlParser.parse(widget.homework.content).body!.text;
+    bool isHtml = widget.homework.subtitle.contains(RegExp(r'<[^>]*>'));
+
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        toolbarHeight: 50,
+        flexibleSpace: Center(
+          child: Image.asset(
+            'assets/images/minerva.png',
+            height: 55,
+          ),
+        ),
+        actions: [
+          if (widget.attachments.length == 1)
+            IconButton(
+              onPressed: () {
+                print('Attachment data: ${widget.attachments[0]}');
+
+                // Modify the URL for preview
+                String previewUrl = widget.attachments[0]['url'] ?? '';
+                // String fileType =
+                //     widget.attachments[0]['ft'] ?? ''; // Get the file type
+                String fileType = widget.attachments[0]['ft'] ??
+                    widget.attachments[0]['title'] ??
+                    ''; // Get the file type
+                previewUrl = previewUrl.replaceFirst('action', 'preview');
+
+                if (previewUrl.isNotEmpty && fileType.isNotEmpty) {
+                  // Add prefix if necessary
+                  if (!previewUrl.startsWith("https://mycampus.cloud/")) {
+                    previewUrl = "https://mycampus.cloud/$previewUrl";
+                  }
+
+                  // If using 'p' and 't' keys
+                  previewUrl = previewUrl.replaceFirst('action', 'preview');
+
+                  print("PreviewURL: $previewUrl");
+                  print("File type: $fileType");
+
+                  if (fileType == '.pdf') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PdfViewer(pdfUrl: previewUrl),
+                      ),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DocumentViewer(
+                          documentUrl: previewUrl,
+                          fileType: fileType,
+                        ),
+                      ),
+                    );
+                  }
+                } else {
+                  print('Error: Preview URL or file type is empty');
+                }
+              },
+              icon: Icon(
+                Icons.description,
+                color: Colors.black,
+              ),
+            ),
+          // Download Button
+          if (widget.attachments.isNotEmpty)
+            IconButton(
+              onPressed: () {
+                if (widget.attachments.isNotEmpty) {
+                  String fileType = widget.attachments[0]['t'] ??
+                      widget.attachments[0]['title'] ??
+                      '';
+                  List<String> allowedFileTypes = ['.PDF', '.pdf'];
+                  if (allowedFileTypes.contains(fileType)) {
+                    downloadAttachments(widget.attachments);
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Sorry"),
+                          content: Text(
+                              "Kindly note that at the moment, only PDFs are available for download. To access the document, please click on the 'View Attachment' button.\n\nThank you for your understanding."),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text("OK"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                }
+              },
+              icon: Icon(
+                Icons.download,
+                color: Colors.black,
+              ),
+            ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          elevation: 4.0,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  widget.homework.title,
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 16.0),
+                if (isHtml)
+                  Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: InAppWebView(
+                        initialData: InAppWebViewInitialData(
+                            data: widget.homework.subtitle),
+                      ),
+                    ),
+                  )
+                else
+                  Text(
+                    'Due date: ${formatDueDate(widget.homework.subtitle)}' ??
+                        '',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
+                      color: Color.fromARGB(255, 96, 96, 96),
+                    ),
+                  ),
+                SizedBox(height: 16.0),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Html(data: parsedContent),
+                  ),
+                ),
+                if (widget.attachments.isNotEmpty)
+                  Column(
+                    children: [],
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String formatDueDate(String? date) {
+    if (date == null || date.isEmpty) {
+      return '';
+    }
+
+    DateTime dateTime = DateTime.parse(date);
+    String formattedDate = DateFormat('d MMMM yyyy').format(dateTime);
+
+    return formattedDate;
+  }
+
+  Future<void> requestStoragePermission() async {
+    print('Requesting storage permission...');
+
+    final deviceInfo = DeviceInfoPlugin();
+    final androidInfo = await deviceInfo.androidInfo;
+
+    if (androidInfo.version.sdkInt >= 33) {
+      await downloadAttachments(widget.attachments);
+    } else {
+      var status = await Permission.storage.request();
+      if (status.isGranted) {
+        print('Storage permission granted.');
+        setState(() => isDownloading = true);
+        await downloadAttachments(widget.attachments);
+
+        setState(() => isDownloading = false);
+      } else if (status.isPermanentlyDenied) {
+        setState(() => isDownloading = false);
+        print('Storage permission permanently denied.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Storage permission permanently denied')),
+        );
+      }
+    }
+  }
+
+  Future<String?> pickDirectory() async {
+    String? directoryPath = await FilePicker.platform.getDirectoryPath();
+
+    if (directoryPath == null) {
+      // User canceled or didn't pick a directory
+      print('User canceled or didn\'t pick a directory');
+    } else {
+      // User picked a directory
+      print('User picked directory: $directoryPath');
+    }
+
+    return directoryPath;
+  }
+
+  Future<void> _downloadFile(String url, String filePath) async {
+    final response = await http.get(Uri.parse(url));
+
+    // Debug logging: Print HTTP response headers
+    print('HTTP Response Headers: ${response.headers}');
+
+    if (response.statusCode == 200) {
+      // Write the file to disk
+      final File file = File(filePath);
+      await file.writeAsBytes(response.bodyBytes,
+          mode: FileMode.write); // Write in binary mode
+
+      // Verify file integrity
+      await verifyFile(filePath);
+
+      // Open the downloaded file
+    } else {
+      print(
+          'Error: Failed to download file, status code: ${response.statusCode}');
+    }
+  }
+
+  Future<void> downloadAttachments(
+      List<Map<String, dynamic>> attachments) async {
+    setState(() {
+      isDownloading = true;
+    });
+
+    try {
+      for (var attachment in attachments) {
+        final String? url = attachment['url'] ?? attachment['p'];
+        final String? fileName = attachment['filename'] ?? attachment['dn'];
+
+        if (url == null || fileName == null || fileName.isEmpty) {
+          print('URL or file name is missing');
+          continue;
+        }
+
+        final String downloadUrl = modifyDownloadUrl(url);
+
+        print('Downloading attachment from URL: $downloadUrl');
+
+        final directoryPath = await pickDirectory();
+        if (directoryPath == null) {
+          print('User canceled file picking');
+          return;
+        }
+
+        final filePath = path.join(
+            directoryPath, '$fileName.pdf'); // Append ".pdf" to the file name
+        print("File path: $filePath");
+
+        await _downloadFile(downloadUrl, filePath);
+
+        // Show success dialog
+        _showDownloadSuccessDialog(filePath);
+
+        print("Download task completed for file: $fileName");
+      }
+
+      print("All tasks enqueued successfully");
+    } catch (e) {
+      print('Error downloading attachments: $e');
+    } finally {
+      setState(() {
+        isDownloading = false;
+      });
+    }
+  }
+
+  Future<void> verifyFile(String filePath) async {
+    List<int> bytes = await File(filePath).readAsBytes();
+    String downloadedChecksum = sha256.convert(bytes).toString();
+
+    String originalChecksum = '...';
+    if (downloadedChecksum == originalChecksum) {
+    } else {
+      print('Downloaded file may be corrupted');
+    }
+  }
+
+  void _showDownloadSuccessDialog(String filePath) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            "Download Successful",
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight:
+                  FontWeight.bold, // You can adjust font weight as needed
+              // You can also specify other text properties here such as color, etc.
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  String modifyDownloadUrl(String? url) {
+    if (url == null) return '';
+    if (!url.startsWith('https://mycampus.cloud/')) {
+      url = 'https://mycampus.cloud/$url';
+    }
+    url = url.replaceFirst('action', 'download');
+
+    return url;
+  }
+}

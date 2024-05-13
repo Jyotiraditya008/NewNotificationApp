@@ -1,0 +1,118 @@
+{
+  "project_info": {
+    "project_number": "786333795221",
+    "project_id": "minerva-1f76c",
+    "storage_bucket": "minerva-1f76c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:786333795221:android:836823cbcc2fb2f6fa6c9c",
+        "android_client_info": {
+          "package_name": "com.campuslive.minervaschool"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "786333795221-947ug1qn340cbmsi8759lv7p42sb9goc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtCUMOV7z_bylSjdD-HgUyc1_fFqOlLxA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "786333795221-947ug1qn340cbmsi8759lv7p42sb9goc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "786333795221-lbbklpds8o0do82jnv7bnt727e5e3t0v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.campuslive.minervaschool"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:786333795221:android:612a6b1a506b0920fa6c9c",
+        "android_client_info": {
+          "package_name": "com.campuslive.minervaschool"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "786333795221-947ug1qn340cbmsi8759lv7p42sb9goc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtCUMOV7z_bylSjdD-HgUyc1_fFqOlLxA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "786333795221-947ug1qn340cbmsi8759lv7p42sb9goc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "786333795221-lbbklpds8o0do82jnv7bnt727e5e3t0v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.campuslive.minervaschool"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:786333795221:android:c237ba6bf1d7bb88fa6c9c",
+        "android_client_info": {
+          "package_name": "com.stellar.campuslive2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "786333795221-947ug1qn340cbmsi8759lv7p42sb9goc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtCUMOV7z_bylSjdD-HgUyc1_fFqOlLxA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "786333795221-947ug1qn340cbmsi8759lv7p42sb9goc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "786333795221-lbbklpds8o0do82jnv7bnt727e5e3t0v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.campuslive.minervaschool"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
